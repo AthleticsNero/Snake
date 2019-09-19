@@ -200,6 +200,7 @@ void ChangeBody(int y,int x){
   }else{
     turn_on_head();
     p = head;
+    //maybe
     while(p->next!=NULL){
       p=p->next;
     }
