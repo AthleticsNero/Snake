@@ -11,6 +11,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 char towards = 'D';
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
+int snake_len = 3;
 typedef struct Snakes{
   int x;
   int y;
@@ -131,6 +132,7 @@ void snake_moving(){
   int snake_len = 1;
   int x = head->x, y = head->y;
   snake *p = head->next;
+  //先默认关闭最后一盏灯
   while(1){
     if(p->next == NULL){
       turn_down(p->y,p->x);
@@ -138,17 +140,6 @@ void snake_moving(){
     }
     p = p->next;
   }
-//  snake *p = head;
-//  snake *q = p->next;
-//  while(1){
-//    if(q->next == NULL){
-//      turn_down(q->y,q->x);
-//      break;
-//    }
-//    snake_len++;
-//    q = q->next;
-//    p = p->next;
-//  }
   switch(towards){
     case 'W':
             head->y -= 1;
@@ -199,8 +190,9 @@ void ChangeBody(int y,int x){
     _new ->next = NULL;
     turn_on_body(head->y,head->x);
     turn_on_body(_new->y,_new->x);
-    //吃到食物时，蛇头由食物的绿变红，蛇尾保留，所以点亮的只是蛇头
+    //吃到食物时，蛇头由食物的绿变红，蛇尾需要重新点亮
     Serial.println("吃到食物");
+    snake_len++;
     create_food();
   }else{
     turn_on_body(head->y,head->x);
@@ -252,5 +244,11 @@ void loop() {
   }
   client.loop();
   snake_moving();
-  delay(500);
+  if(snake_len<=10){
+    delay(600);
+  }else if(snake_len<=20){
+    delay(500);
+  }else{
+    delay(350);
+  }
 }
