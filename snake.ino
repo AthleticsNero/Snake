@@ -77,10 +77,22 @@ void setup_wifi(){
   Serial.println(WiFi.localIP());
 }
 void callback(char* topic,byte* payload,unsigned int length){   
-  if(strcmp(topic,"mode")==0){
-    opt = (char)payload[0];           
-  }else if(strcmp(topic,"control")==0){
-    towards = (char)payload[0];
+  opt = (char)payload[0];
+  Serial.println(opt);
+  Serial.println((char)payload[0]);
+//  Serial.print("传入数据:");
+//  Serial.println((char)payload[0]);
+//  if(strcmp(topic,"mode")==0){
+//    opt = (char)payload[0];   
+//    Serial.println(opt);        
+//  }else if(strcmp(topic,"control")==0){
+//    towards = (char)payload[0];
+//    Serial.println(towards);
+//  }
+}
+void clear_all(){
+  for(int i = 0;i<484;i++){
+    leds[i] = CRGB(0,0,0);
   }
 }
 void create_walls(){
@@ -112,12 +124,6 @@ void setup() {
   client.setServer(mqtt_server,1883);
   client.setCallback(callback);
   FastLED.addLeds<WS2812,PIN,GRB>(leds,MAXLED);
-  create_walls();
-  create_food();
-  create_snake();
-  Serial.println("初始化了");
-  FastLED.show();
-  delay(1000);
 }
 void reconnect(){
   while(!client.connected()){
@@ -126,6 +132,7 @@ void reconnect(){
       Serial.println("connected");
       client.subscribe("mode");
       client.subscribe("control");
+      Serial.println("订阅上了");
     }else{
       Serial.print("failed,rc=");
       Serial.print(client.state());
@@ -245,15 +252,36 @@ void turn_down(int y,int x){
   maps[y][x] = 0;
 }
 void welcome(){
-  for(int i=0;i<482;i++){
+  leds[0] = CRGB(255,0,0);
+  leds[1] = CRGB(255,0,0);
+  for(int i=2;i<483;i++){
     if(opt!='I'){
+      Serial.println("已经变了");
       break;
     }
     leds[i] = CRGB(255,0,0);
     leds[i+1] = CRGB(255,0,0);
-    leds[i+2] = CRGB(255,0,0);
+    leds[i-2] = CRGB(0,0,0);
     FastLED.show();
     delay(80);
+  }
+}
+void normal_mode(){
+  clear_all();
+  create_walls();
+  create_food();
+  create_snake();
+  FastLED.show();
+  delay(1000);
+  while(opt == 'N'){
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
   }
 }
 void loop() {
@@ -265,13 +293,6 @@ void loop() {
   if(opt == 'I'){
     welcome();
   }else if(opt == 'N'){
-    snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(500);
-    }else{
-      delay(350);
-    }
+    normal_mode();
   }
 }
