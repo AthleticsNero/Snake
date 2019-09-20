@@ -10,7 +10,9 @@ const char* mqtt_server = "47.102.201.222";
 WiFiClient espClient;
 PubSubClient client(espClient);
 char towards = 'D';
+char opt = 'I';
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
+int snake_len = 3;
 typedef struct Snakes{
   int x;
   int y;
@@ -74,8 +76,12 @@ void setup_wifi(){
   Serial.println("IP address:");
   Serial.println(WiFi.localIP());
 }
-void callback(char* topic,byte* payload,unsigned int length){              
-   towards = (char)payload[0];
+void callback(char* topic,byte* payload,unsigned int length){   
+  if(strcmp(topic,"mode")==0){
+    opt = (char)payload[0];           
+  }else if(strcmp(topic,"control")==0){
+    towards = (char)payload[0];
+  }
 }
 void create_walls(){
   int i; 
@@ -118,6 +124,7 @@ void reconnect(){
     Serial.print("Attempting MQTT connection...");
     if(client.connect("ESP32Client")){
       Serial.println("connected");
+      client.subscribe("mode");
       client.subscribe("control");
     }else{
       Serial.print("failed,rc=");
@@ -130,19 +137,15 @@ void reconnect(){
 void snake_moving(){
   int snake_len = 1;
   int x = head->x, y = head->y;
-//  snake *p = head;
-//  snake *q = p->next;
-//  while(1){
-//    if(q->next == NULL){
-//      turn_down(q->y,q->x);
-////      p->next = NULL; //本身长度不减，不能删除节点
-//      Serial.println("关掉最后一盏灯");
-//      break;
-//    }
-//    snake_len++;
-//    q = q->next;
-//    p = p->next;
-//  }
+  snake *p = head->next;
+  //先默认关闭最后一盏灯
+  while(1){
+    if(p->next == NULL){
+      turn_down(p->y,p->x);
+      break;
+    }
+    p = p->next;
+  }
   switch(towards){
     case 'W':
             head->y -= 1;
@@ -184,7 +187,6 @@ void ChangeBody(int y,int x){
   if(head->x == food.x&&head->y == food.y){
     snake *_new = (snake*)malloc(sizeof(snake));
     p = head;
-//    snake *p = head;
     while(p->next!=NULL){
       p = p->next;
     }
@@ -192,29 +194,17 @@ void ChangeBody(int y,int x){
     _new->y = pos_b;
     p->next = _new;
     _new ->next = NULL;
-    turn_on_head();
-    //吃到食物时，蛇头由食物的绿变红，蛇尾保留，所以点亮的只是蛇头
+    turn_on_body(head->y,head->x);
+    turn_on_body(_new->y,_new->x);
+    //吃到食物时，蛇头由食物的绿变红，蛇尾需要重新点亮
     Serial.println("吃到食物");
+    snake_len++;
     create_food();
-    FastLED.show();
   }else{
-    turn_on_head();
-    p = head;
-    while(p->next!=NULL){
-      p=p->next;
-    }
-    turn_down(p->y,p->x);
-
-    //当他没吃到食物时，最后一个蛇身要消失到前面去，关掉最后一盏灯
-//    while(1){
-//      if(p->next == NULL){
-//        turn_down(p->y,p->x);
-//        Serial.println("关掉最后一盏灯");
-//        break;
-//      }
-//      p = p->next;
-//    }  
+    turn_on_body(head->y,head->x);
+    //没吃到食物，根据正常行进，前面已经turn_down蛇尾，这会儿点亮蛇头就行
   }
+  FastLED.show();
 }
 void judge(){
   if(maps[head->y][head->x]==3||maps[head->y][head->x]==1){
@@ -232,16 +222,16 @@ void end_game(){
 }
 //蛇身在哪个方向前进
 //只需要点亮蛇头
-void turn_on_head(){
+void turn_on_body(int y,int x){
   int pos;
-  pos = (head->y + 1) * 22 - 1 - head->x; 
-  if(head->y % 2 ==1){
+  pos = (y + 1) * 22 - 1 - x; 
+  if(y % 2 ==1){
     leds[pos] = CRGB(255,0,0);
   }else{
-    leds[head->y * 22 + head->x] = CRGB(255,0,0);
+    leds[y * 22 + x] = CRGB(255,0,0);
   }
 //  FastLED.show();
-  maps[head->y][head->x] = 3;
+  maps[y][x] = 3;
 }
 void turn_down(int y,int x){
   int pos;
@@ -251,14 +241,37 @@ void turn_down(int y,int x){
   }else{
     leds[y*22+x] = CRGB(0,0,0);
   }
-  FastLED.show();
+//  FastLED.show();
   maps[y][x] = 0;
+}
+void welcome(){
+  for(int i=0;i<482;i++){
+    if(opt!='I'){
+      break;
+    }
+    leds[i] = CRGB(255,0,0);
+    leds[i+1] = CRGB(255,0,0);
+    leds[i+2] = CRGB(255,0,0);
+    FastLED.show();
+    delay(80);
+  }
 }
 void loop() {
   if(!client.connected()){
     reconnect();
   }
   client.loop();
-  snake_moving();
-  delay(500);
+  //初始值为I（init），即在welcome界面，一旦接收到N（normal）就进入正常模式
+  if(opt == 'I'){
+    welcome();
+  }else if(opt == 'N'){
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(500);
+    }else{
+      delay(350);
+    }
+  }
 }
