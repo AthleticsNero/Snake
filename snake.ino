@@ -11,6 +11,7 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 char towards = 'D';
 char opt = 'I';
+char length_msg[3];
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
 int snake_len = 3;
 typedef struct Snakes{
@@ -77,18 +78,18 @@ void setup_wifi(){
   Serial.println(WiFi.localIP());
 }
 void callback(char* topic,byte* payload,unsigned int length){   
-  opt = (char)payload[0];
-  Serial.println(opt);
-  Serial.println((char)payload[0]);
+//  opt = (char)payload[0];
+//  Serial.println(opt);
+//  Serial.println((char)payload[0]);
 //  Serial.print("传入数据:");
 //  Serial.println((char)payload[0]);
-//  if(strcmp(topic,"mode")==0){
-//    opt = (char)payload[0];   
-//    Serial.println(opt);        
-//  }else if(strcmp(topic,"control")==0){
-//    towards = (char)payload[0];
-//    Serial.println(towards);
-//  }
+  if(strcmp(topic,"mode")==0){
+    opt = (char)payload[0];   
+    Serial.println(opt);        
+  }else if(strcmp(topic,"control")==0){
+    towards = (char)payload[0];
+    Serial.println(towards);
+  }
 }
 void clear_all(){
   for(int i = 0;i<484;i++){
@@ -206,6 +207,15 @@ void ChangeBody(int y,int x){
     //吃到食物时，蛇头由食物的绿变红，蛇尾需要重新点亮
     Serial.println("吃到食物");
     snake_len++;
+    int n = snake_len;
+    if(n>=10){
+      length_msg[0] =  '0'+n/10;
+      length_msg[1] = '0'+ n%10;
+    }else{
+      length_msg[0] = '0'+n;
+      length_msg[1] = '\0';
+    }
+    client.publish("snake_len",length_msg);
     create_food();
   }else{
     turn_on_body(head->y,head->x);
@@ -255,6 +265,7 @@ void welcome(){
   leds[0] = CRGB(255,0,0);
   leds[1] = CRGB(255,0,0);
   for(int i=2;i<483;i++){
+    client.loop();
     if(opt!='I'){
       Serial.println("已经变了");
       break;
@@ -273,7 +284,9 @@ void normal_mode(){
   create_snake();
   FastLED.show();
   delay(1000);
+  client.publish("snake_len","3");
   while(opt == 'N'){
+    client.loop();
     snake_moving();
     if(snake_len<=10){
       delay(600);
