@@ -25,8 +25,12 @@ class MyHomePage extends StatefulWidget{
   _MyHomePageState createState() => _MyHomePageState();
 }
 class _MyHomePageState extends State<MyHomePage>{
+  int snake_len = 3;
+  int score = 0;
   String _pubControl = 'control';
   String _pubModeTopic = 'mode';
+  String _subSnakeLen = 'snake_len';
+  String _subScore = 'score';
   String _pubMsg;
   bool _retainValue = false;
   ScrollController subMsgScrollController = new ScrollController();
@@ -39,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage>{
   void initState(){
     super.initState();
     _connect();
+    _subMessage();
   }
   @override
   Widget build(BuildContext context) {
@@ -55,8 +60,32 @@ class _MyHomePageState extends State<MyHomePage>{
                   onPressed: (){
                     _pubMsg = 'N';
                     _pubMode();
+                    score = 0;
+                    _subMessage();
                   },
                   color: Colors.blueAccent,
+                ),
+              )
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Container(
+                padding: EdgeInsets.fromLTRB(150, 20, 0, 0),
+                child:Text(
+                  "蛇长："+
+                  snake_len.toString()
+                ),
+              )
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Container(
+                padding: EdgeInsets.fromLTRB(150, 20, 0, 0),
+                child: Text(
+                  "得分："+
+                    score.toString()
                 ),
               )
             ],
@@ -166,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage>{
       _disconnect();
     }
 
-//    subscription = client.updates.listen(_onMessage);
+    subscription = client.updates.listen(_onMessage);
 
   }
   void _disconnect() {
@@ -197,21 +226,28 @@ class _MyHomePageState extends State<MyHomePage>{
         'payload is <-- ${message} -->');
     print(client.connectionState);
     setState(() {
-      if(event[0].topic=='control'){
-//        come = message;
-//        print(int.parse(come));
-//        for(int i=0;i<225;i++){
-//          if(int.parse(come)==list[i~/15][i%15].id&&!list[i~/15][i%15].isChoosed){
-//            BtnSingle btnSingle = new BtnSingle(id:int.parse(come) ,isAnchoosed: true);
-//            print(list[i~/15][i%15].id);
-//            print("i am here!");
-//            print(list[i~/15][i%15].isAnchoosed);
-//            list[i~/15][i%15] = btnSingle;
-//            print(list[i~/15][i%15].isAnchoosed);
-//          }
-//        }
+      if(event[0].topic=='snake_len'){
+        snake_len = int.parse(message);
+        print(snake_len);
+      }else if(event[0].topic=='score'){
+        score = int.parse(message);
+        print(score);
       }
     });
+
+  }
+  void _subMessage(){
+    //开始接收subtopic的submessage
+    print("on sub message");
+    if(connectionState == mqtt.MqttConnectionState.connected){
+      setState(() {
+        print('subscribe to ${_subSnakeLen}');
+        client.subscribe(_subSnakeLen, mqtt.MqttQos.exactlyOnce);
+        client.subscribe(_subScore, mqtt.MqttQos.exactlyOnce);
+      });
+    }
+
+//      come =  messages.map((Message message){message.message;}).toString();
 
   }
   void _pubMessage(){
