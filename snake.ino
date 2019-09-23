@@ -14,6 +14,8 @@ char opt = 'I';
 char length_msg[3];
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
 int snake_len = 3;
+int score = 0;
+char score_msg[6];
 typedef struct Snakes{
   int x;
   int y;
@@ -216,6 +218,15 @@ void ChangeBody(int y,int x){
       length_msg[1] = '\0';
     }
     client.publish("snake_len",length_msg);
+    if(snake_len<=10){
+      score += 100;
+    }else if(snake_len<=20){
+      score += 200;
+    }else{
+      score += 300;
+    }
+    itoa(score,score_msg,10);
+    client.publish("score",score_msg);
     create_food();
   }else{
     turn_on_body(head->y,head->x);
