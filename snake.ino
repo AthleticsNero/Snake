@@ -9,6 +9,8 @@ const char* password = "12345678";
 const char* mqtt_server = "47.102.201.222";
 WiFiClient espClient;
 PubSubClient client(espClient);
+//int logo[52] = {177,217,219,221,263,261,265,180,215,224,259,268,214,226,183,212,227,256,271,186,187,210,229,254,273,230,231,207,232,251,276,190,205,234,249,278,247,281,203,235,193,283,284,285,195,196,197,200,244,239,240,241};
+int wall2[44] = {51,80,95,124,139,168,169,170,171,172,173,58,73,102,117,146,161,160,159,158,157,156,310,311,312,313,314,315,344,359,388,403,432,327,326,325,324,323,322,337,366,381,410,425};
 char towards = 'D';
 char opt = 'I';
 char length_msg[3];
@@ -98,7 +100,7 @@ void clear_all(){
     leds[i] = CRGB(0,0,0);
   }
 }
-void create_walls(){
+void create_wall1(){
   int i; 
   for(i = 0;i < 22;i++){
     maps[0][i] = 1;
@@ -113,7 +115,16 @@ void create_walls(){
       leds[i] = CRGB(0,0,0);
     }
   }
-//  FastLED.show();
+}
+void create_wall2(){
+  for(int i = 0;i<44;i++){
+    leds[wall2[i]] = CRGB(0,0,255);
+    if((wall2[i]/22)%2==0){
+      maps[wall2[i]/22][wall2[i]%22] = 1;
+    }else{
+      maps[wall2[i]/22][21-wall2[i]%22] = 1;
+    }
+  }
 }
 void setup() {
   Serial.begin(115200);
@@ -316,6 +327,26 @@ void welcome(){
     delay(80);
   }
 }
+void mode2(){
+  clear_all();
+  create_wall2();
+  create_food();
+  create_snake();
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == 'Y'){
+    client.loop();
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
 void infinity_mode(){
   clear_all();
   create_food();
@@ -337,7 +368,7 @@ void infinity_mode(){
 }
 void normal_mode(){
   clear_all();
-  create_walls();
+  create_wall1();
   create_food();
   create_snake();
   FastLED.show();
@@ -367,5 +398,7 @@ void loop() {
     normal_mode();
   }else if(opt == 'M'){
     infinity_mode();
+  }else if(opt == 'Y'){
+    mode2();
   }
 }
