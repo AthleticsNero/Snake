@@ -54,9 +54,9 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
-                padding: EdgeInsets.fromLTRB(150, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(75, 0, 0, 0),
                 child: RaisedButton(
-                  child: Text('开始游戏'),
+                  child: Text('开始模式1'),
                   onPressed: (){
                     _pubMsg = 'N';
                     _pubMode();
@@ -64,6 +64,18 @@ class _MyHomePageState extends State<MyHomePage>{
                     _subMessage();
                   },
                   color: Colors.blueAccent,
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式2'),
+                  onPressed: (){
+                    _pubMsg = 'M';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
                 ),
               )
             ],

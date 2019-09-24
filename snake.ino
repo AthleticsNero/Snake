@@ -158,22 +158,38 @@ void snake_moving(){
   }
   switch(towards){
     case 'W':
-            head->y -= 1;
+            if(head->y==0){
+              head->y = 21;
+            }else{
+              head->y -= 1;
+            }
             judge();
             Serial.println("向上一步走");
             break;
     case 'A':
-            head->x -= 1;
+            if(head->x == 0){
+              head->x = 21;
+            }else{
+              head->x -= 1;
+            }
             judge();
             Serial.println("向左一步走");
             break;
     case 'S':
-            head->y += 1;
+            if(head->y == 21){
+              head->y = 0;
+            }else{
+              head->y += 1;
+            }
             judge();
             Serial.println("向下一步走");
             break;
     case 'D':
-            head->x += 1;
+            if(head->x == 21){
+              head->x = 0;
+            }else{
+              head->x += 1;
+            }
             judge();
             Serial.println("向右一步走");
             break;
@@ -273,6 +289,18 @@ void turn_down(int y,int x){
   maps[y][x] = 0;
 }
 void welcome(){
+//  while(opt=='I'){
+//    client.loop();
+//    if(opt!='I'){
+//      break;
+//    }
+//    for(int i = 0;i<52;i++){
+//      leds[logo[i]] = CRGB(255,68,0);
+//    }
+//    FastLED.show();
+//    delay(1000); 
+//  }
+  
   leds[0] = CRGB(255,0,0);
   leds[1] = CRGB(255,0,0);
   for(int i=2;i<483;i++){
@@ -286,6 +314,25 @@ void welcome(){
     leds[i-2] = CRGB(0,0,0);
     FastLED.show();
     delay(80);
+  }
+}
+void infinity_mode(){
+  clear_all();
+  create_food();
+  create_snake();
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == 'M'){
+    client.loop();
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
   }
 }
 void normal_mode(){
@@ -318,5 +365,7 @@ void loop() {
     welcome();
   }else if(opt == 'N'){
     normal_mode();
+  }else if(opt == 'M'){
+    infinity_mode();
   }
 }
