@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage>{
                 child: RaisedButton(
                   child: Text('开始模式1'),
                   onPressed: (){
-                    _pubMsg = 'N';
+                    _pubMsg = '1';
                     _pubMode();
                     score = 0;
                     _subMessage();
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage>{
                 child: RaisedButton(
                   child: Text('开始模式2'),
                   onPressed: (){
-                    _pubMsg = 'M';
+                    _pubMsg = '2';
                     _pubMode();
                     score = 0;
                     _subMessage();
@@ -83,12 +83,41 @@ class _MyHomePageState extends State<MyHomePage>{
                 child: RaisedButton(
                   child: Text('开始模式3'),
                   onPressed: (){
-                    _pubMsg = 'Y';
+                    _pubMsg = '3';
                     _pubMode();
                     score = 0;
                     _subMessage();
                   },
                   color: Colors.greenAccent
+                ),
+              ),
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Container(
+                padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式4'),
+                  onPressed: (){
+                    _pubMsg = '4';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
+                  color: Colors.blueAccent,
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式5'),
+                  onPressed: (){
+                    _pubMsg = '5';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
                 ),
               ),
             ],

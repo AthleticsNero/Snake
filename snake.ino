@@ -10,9 +10,9 @@ const char* mqtt_server = "47.102.201.222";
 WiFiClient espClient;
 PubSubClient client(espClient);
 //int logo[52] = {177,217,219,221,263,261,265,180,215,224,259,268,214,226,183,212,227,256,271,186,187,210,229,254,273,230,231,207,232,251,276,190,205,234,249,278,247,281,203,235,193,283,284,285,195,196,197,200,244,239,240,241};
-int wall2[44] = {51,80,95,124,139,168,169,170,171,172,173,58,73,102,117,146,161,160,159,158,157,156,310,311,312,313,314,315,344,359,388,403,432,327,326,325,324,323,322,337,366,381,410,425};
+int wall3[44] = {51,80,95,124,139,168,169,170,171,172,173,58,73,102,117,146,161,160,159,158,157,156,310,311,312,313,314,315,344,359,388,403,432,327,326,325,324,323,322,337,366,381,410,425};
 char towards = 'D';
-char opt = 'I';
+char opt = '0';
 char length_msg[3];
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
 int snake_len = 3;
@@ -100,7 +100,7 @@ void clear_all(){
     leds[i] = CRGB(0,0,0);
   }
 }
-void create_wall1(){
+void create_wall2(){
   int i; 
   for(i = 0;i < 22;i++){
     maps[0][i] = 1;
@@ -116,13 +116,63 @@ void create_wall1(){
     }
   }
 }
-void create_wall2(){
+void create_wall3(){
   for(int i = 0;i<44;i++){
-    leds[wall2[i]] = CRGB(0,0,255);
-    if((wall2[i]/22)%2==0){
-      maps[wall2[i]/22][wall2[i]%22] = 1;
+    leds[wall3[i]] = CRGB(0,0,255);
+    if((wall3[i]/22)%2==0){
+      maps[wall3[i]/22][wall3[i]%22] = 1;
     }else{
-      maps[wall2[i]/22][21-wall2[i]%22] = 1;
+      maps[wall3[i]/22][21-wall3[i]%22] = 1;
+    }
+  }
+}
+void create_wall4(){
+  for(int i = 0;i<22;i++){
+    for(int j = 0;j<22;j++){
+      if((i!=10&&i!=11)&&((i==j)||(i+j)==21)){
+        maps[i][j] = 1;
+      }
+    }
+  }
+  for(int i = 0;i < MAXLED;i++){
+    if(maps[i/22][i%22] == 1){
+      leds[i] = CRGB(0,0,255);
+    }else{
+      leds[i] = CRGB(0,0,0);
+    }
+  }
+}
+void create_wall5(){
+  int i,j;
+  for(j=0;j<10;j++){
+    maps[9][j] = 1;
+  }
+  for(i=0;i<9;i++){
+    maps[i][9] = 1;
+  }
+  for(j=16;j<22;j++){
+    maps[5][j] = 1;
+    maps[13][j] =1;
+  }
+  for(i=6;i<13;i++){
+    maps[i][16] = 1;
+  }
+  for(i=16;i<22;i++){
+    maps[i][6] = 1;
+    maps[i][17] = 1;
+  }
+  for(j=6;j<18;j++){
+    maps[16][j] = 1;
+  }
+  for(i=0;i<MAXLED;i++){
+    if((i/22)%2==0){
+       if(maps[i/22][i%22] == 1){
+          leds[i] = CRGB(0,0,255);
+       }
+    }else{
+      if(maps[i/22][21-i%22] == 1){
+        leds[i] = CRGB(0,0,255);
+      }
     }
   }
 }
@@ -198,7 +248,7 @@ void snake_moving(){
     case 'D':
             if(head->x == 21){
               head->x = 0;
-            }else{
+            }else{                                     
               head->x += 1;
             }
             judge();
@@ -316,7 +366,7 @@ void welcome(){
   leds[1] = CRGB(255,0,0);
   for(int i=2;i<483;i++){
     client.loop();
-    if(opt!='I'){
+    if(opt!='0'){
       Serial.println("已经变了");
       break;
     }
@@ -327,15 +377,15 @@ void welcome(){
     delay(80);
   }
 }
-void mode2(){
+void mode3(){
   clear_all();
-  create_wall2();
+  create_wall3();
   create_food();
   create_snake();
   FastLED.show();
   delay(1000);
   client.publish("snake_len","3");
-  while(opt == 'Y'){
+  while(opt == '3'){
     client.loop();
     snake_moving();
     if(snake_len<=10){
@@ -354,7 +404,7 @@ void infinity_mode(){
   FastLED.show();
   delay(1000);
   client.publish("snake_len","3");
-  while(opt == 'M'){
+  while(opt == '1'){
     client.loop();
     snake_moving();
     if(snake_len<=10){
@@ -366,15 +416,55 @@ void infinity_mode(){
     }
   }
 }
-void normal_mode(){
+void mode2(){
   clear_all();
-  create_wall1();
+  create_wall2();
   create_food();
   create_snake();
   FastLED.show();
   delay(1000);
   client.publish("snake_len","3");
-  while(opt == 'N'){
+  while(opt == '2'){
+    client.loop();
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
+void mode4(){
+  clear_all();
+  create_wall4();
+  create_food();
+  create_snake();
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '4'){
+    client.loop();
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
+void mode5(){
+  clear_all();
+  create_wall5();
+  create_food();
+  create_snake();
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '5'){
     client.loop();
     snake_moving();
     if(snake_len<=10){
@@ -392,13 +482,20 @@ void loop() {
   }
   client.loop();
   //初始值为I（init），即在welcome界面，一旦接收到N（normal）就进入正常模式
-  if(opt == 'I'){
+  if(opt == '0'){
     welcome();
-  }else if(opt == 'N'){
-    normal_mode();
-  }else if(opt == 'M'){
-    infinity_mode();
-  }else if(opt == 'Y'){
+  }else if(opt == '2'){
     mode2();
+    //四面都是墙
+  }else if(opt == '1'){
+    infinity_mode();
+    //无墙
+  }else if(opt == '3'){
+    mode3();
+    //四个L字墙
+  }else if(opt == '4'){
+    mode4();
+  }else if(opt == '5'){
+    mode5();
   }
 }
