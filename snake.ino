@@ -13,6 +13,9 @@ PubSubClient client(espClient);
 int wall3[44] = {51,80,95,124,139,168,169,170,171,172,173,58,73,102,117,146,161,160,159,158,157,156,310,311,312,313,314,315,344,359,388,403,432,327,326,325,324,323,322,337,366,381,410,425};
 char towards = 'D';
 char opt = '0';
+int no = 1;
+int single_score = 100;//分数的计数单位
+int now_score = 100;//当前关卡的分数单位
 char length_msg[3];
 int maps[22][22];//0:nothing 1:wall 2:food 3:snake 
 int snake_len = 3;
@@ -38,6 +41,26 @@ void create_snake(){
   p->y = 10;
   q->x = 10;
   q->y = 10;
+  head->next = p;
+  p->next = q;
+  q->next = NULL;
+  maps[head->y][head->x]=3;
+  maps[p->y][p->x]=3;
+  maps[q->y][q->x]=3;
+  leds[(head->y)*22+head->x]=CRGB(255,0,0);
+  leds[(p->y)*22+p->x]=CRGB(255,0,0);
+  leds[(q->y)*22+q->y]=CRGB(255,0,0);
+}
+void create_snake2(){
+  head = (snake*)malloc(sizeof(snake));
+  head->x = 6;
+  head->y = 6;
+  snake *p = (snake*)malloc(sizeof(snake));
+  snake *q = (snake*)malloc(sizeof(snake));
+  p->x = 5;
+  p->y = 6;
+  q->x = 4;
+  q->y = 6;
   head->next = p;
   p->next = q;
   q->next = NULL;
@@ -99,6 +122,12 @@ void clear_all(){
   for(int i = 0;i<484;i++){
     leds[i] = CRGB(0,0,0);
   }
+  for(int i = 0;i<22;i++){
+    for(int j = 0;j<22;j++){
+      maps[i][j] = 0;
+    }
+  }
+  snake_len = 3;
 }
 void create_wall2(){
   int i; 
@@ -176,6 +205,86 @@ void create_wall5(){
     }
   }
 }
+void create_wall6(){
+  int i;
+  for(i=0;i<16;i++){
+    maps[i][8] = 1;
+    maps[i][18] = 1;
+  }
+  for(i=6;i<22;i++){
+    maps[i][3] = 1;
+    maps[i][13] = 1;
+  }
+  for(i=0;i<MAXLED;i++){
+    if((i/22)%2==0){
+       if(maps[i/22][i%22] == 1){
+          leds[i] = CRGB(0,0,255);
+       }
+    }else{
+      if(maps[i/22][21-i%22] == 1){
+        leds[i] = CRGB(0,0,255);
+      }
+    }
+  }
+}
+void create_wall7(){
+  int i;
+  for(i=0;i<22;i++){
+    maps[i][10] = 1;
+    maps[i][11] = 1;
+    maps[10][i] = 1;
+    maps[11][i] = 1; 
+  }
+  for(i=0;i<MAXLED;i++){
+    if((i/22)%2==0){
+       if(maps[i/22][i%22] == 1){
+          leds[i] = CRGB(0,0,255);
+       }
+    }else{
+      if(maps[i/22][21-i%22] == 1){
+        leds[i] = CRGB(0,0,255);
+      }
+    }
+  }
+}
+void create_wall8(){
+  int i;
+  for(i=3;i<8;i++){
+    maps[3][i] = 1;
+    maps[18][i] = 1;
+    maps[i][3] = 1;
+    maps[i][18] = 1;
+  }
+  for(i=14;i<19;i++){
+    maps[i][3] = 1;
+    maps[i][18] = 1;
+    maps[3][i] = 1;
+    maps[18][i] = 1; 
+  }
+  for(i=7;i<10;i++){
+    maps[9][i] = 1;
+    maps[12][i] = 1;
+    maps[i][9] = 1;
+    maps[i][12] = 1;
+  }
+  for(i=12;i<15;i++){
+    maps[9][i] = 1;
+    maps[12][i] = 1;
+    maps[i][9] = 1;
+    maps[i][12] = 1;
+  }
+  for(i=0;i<MAXLED;i++){
+    if((i/22)%2==0){
+       if(maps[i/22][i%22] == 1){
+          leds[i] = CRGB(0,0,255);
+       }
+    }else{
+      if(maps[i/22][21-i%22] == 1){
+        leds[i] = CRGB(0,0,255);
+      }
+    }
+  }
+}
 void setup() {
   Serial.begin(115200);
   FastLED.setBrightness(64); 
@@ -206,7 +315,8 @@ void reconnect(){
   }
 }
 void snake_moving(){
-  int snake_len = 1;
+//  int snake_len = 1;
+//没看懂这句话为什么写了，应该没用
   int x = head->x, y = head->y;
   snake *p = head->next;
   //先默认关闭最后一盏灯
@@ -296,11 +406,11 @@ void ChangeBody(int y,int x){
     }
     client.publish("snake_len",length_msg);
     if(snake_len<=10){
-      score += 100;
+      score += now_score;
     }else if(snake_len<=20){
-      score += 200;
+      score += now_score*1.5;
     }else{
-      score += 300;
+      score += now_score*2;
     }
     itoa(score,score_msg,10);
     client.publish("score",score_msg);
@@ -313,9 +423,12 @@ void ChangeBody(int y,int x){
 }
 void judge(){
   if(maps[head->y][head->x]==3||maps[head->y][head->x]==1){
-    while(1){
+    opt = 'E';
+    while(opt=='E'){
       end_game();
       delay(1000);
+      client.loop();
+      check_mode('E');
     }
   }
 }
@@ -387,6 +500,7 @@ void mode3(){
   client.publish("snake_len","3");
   while(opt == '3'){
     client.loop();
+    check_mode('3');
     snake_moving();
     if(snake_len<=10){
       delay(600);
@@ -406,6 +520,7 @@ void infinity_mode(){
   client.publish("snake_len","3");
   while(opt == '1'){
     client.loop();
+    check_mode('1');
     snake_moving();
     if(snake_len<=10){
       delay(600);
@@ -426,6 +541,7 @@ void mode2(){
   client.publish("snake_len","3");
   while(opt == '2'){
     client.loop();
+    check_mode('2');
     snake_moving();
     if(snake_len<=10){
       delay(600);
@@ -444,8 +560,10 @@ void mode4(){
   FastLED.show();
   delay(1000);
   client.publish("snake_len","3");
+  towards = 'D';
   while(opt == '4'){
     client.loop();
+    check_mode('4');
     snake_moving();
     if(snake_len<=10){
       delay(600);
@@ -466,6 +584,7 @@ void mode5(){
   client.publish("snake_len","3");
   while(opt == '5'){
     client.loop();
+    check_mode('5');
     snake_moving();
     if(snake_len<=10){
       delay(600);
@@ -475,6 +594,151 @@ void mode5(){
       delay(350);
     }
   }
+}
+void mode6(){
+  clear_all();
+  create_wall6();
+  create_food();
+  create_snake();
+  towards = 'S';
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '6'){
+    client.loop();
+    check_mode('6');
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
+void mode7(){
+  clear_all();
+  create_wall7();
+  create_food();
+  create_snake2();
+  towards = 'D';
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '7'){
+    client.loop();
+    check_mode('7');
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
+void mode8(){
+  clear_all();
+  create_wall8();
+  create_food();
+  create_snake();
+  towards = 'D';
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '8'){
+    client.loop();
+    check_mode('8');
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
+//用于检查当前是不是切换了mode
+void check_mode(char now_mode){
+  if(opt!=now_mode){
+    if(opt == '0'){
+      welcome();
+    }else if(opt == '2'){
+      mode2();
+      //四面都是墙
+    }else if(opt == '1'){
+      infinity_mode();
+      //无墙
+    }else if(opt == '3'){
+      mode3();
+      //四个L字墙
+    }else if(opt == '4'){
+      mode4();
+    }else if(opt == '5'){
+      mode5();
+    }else if(opt == '6'){
+      mode6();
+    }else if(opt == '7'){
+      mode7();
+    }else if(opt == '8'){
+      mode8();
+    }else if(opt == 'B'){
+      battle_mode();
+      //闯关模式，吃十五个食物进入下一关
+    }
+  }
+}
+void battle_mode(){
+  while(opt=='B'){
+    clear_all();
+    switch(no){
+      case 1:
+        create_wall2();
+        now_score = single_score;
+        break;
+      case 2:
+        create_wall3();
+        now_score = single_score*1.5;
+        break;
+      case 3:
+        create_wall4();
+        now_score = single_score*2;
+        break;
+      case 4:
+        create_wall5();
+        now_score = single_score*2.5;
+        break;
+      case 5:
+        create_wall5();
+        now_score = single_score*3;
+        break;
+     }
+     create_food();
+     create_snake();
+     FastLED.show();
+     delay(1000);
+     client.publish("snake_len","3");
+     while(opt == 'B'){
+      client.loop();
+      snake_moving();
+      if(snake_len<=10){
+        delay(600);
+      }else if(snake_len<=15){
+        delay(475);
+      }else{
+        delay(350);
+      }
+      if(snake_len==6){
+        towards='D';
+        no++;
+        break;
+      }
+    }
+  }
+  
 }
 void loop() {
   if(!client.connected()){
@@ -497,5 +761,14 @@ void loop() {
     mode4();
   }else if(opt == '5'){
     mode5();
+  }else if(opt == '6'){
+    mode6();
+  }else if(opt == '7'){
+    mode7();
+  }else if(opt == '8'){
+    mode8();
+  }else if(opt == 'B'){
+    battle_mode();
+    //闯关模式，吃十五个食物进入下一关
   }
 }

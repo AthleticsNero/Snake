@@ -118,6 +118,64 @@ class _MyHomePageState extends State<MyHomePage>{
                     score = 0;
                     _subMessage();
                   },
+                  color: Colors.greenAccent,
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('冒险模式'),
+                  onPressed: (){
+                    _pubMsg = 'B';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
+                ),
+              ),
+
+            ],
+
+          ),
+
+          new Row(
+            children: <Widget>[
+              new Container(
+                padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式6'),
+                  onPressed: (){
+                    _pubMsg = '6';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
+                  color: Colors.blueAccent,
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式7'),
+                  onPressed: (){
+                    _pubMsg = '7';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
+                  color: Colors.greenAccent,
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                child: RaisedButton(
+                  child: Text('开始模式8'),
+                  onPressed: (){
+                    _pubMsg = '8';
+                    _pubMode();
+                    score = 0;
+                    _subMessage();
+                  },
                 ),
               ),
             ],
@@ -148,14 +206,14 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 250,
-                padding: EdgeInsets.fromLTRB(150, 100, 0, 25),
-                child: RaisedButton(
-                  child: Text('↑'),
+                padding: EdgeInsets.fromLTRB(175, 100, 0, 25),
+                child: FloatingActionButton(
+                  child: new Icon(Icons.arrow_drop_up),
                   onPressed: (){
                     _pubMsg = 'W';
                     _pubMessage();
                   },
-                  color: Colors.yellowAccent,
+                  backgroundColor: Colors.orangeAccent,
                 ),
               ),
             ],
@@ -164,26 +222,27 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 150,
-                padding: EdgeInsets.fromLTRB(50, 0, 50, 25),
-                child: RaisedButton(
-                    child:  Text('←'),
+                padding: EdgeInsets.fromLTRB(100, 0, 50, 25),
+                child: FloatingActionButton(
+                    child:  new Icon(Icons.arrow_left),
                     onPressed:(){
                       _pubMsg = 'A';
                       _pubMessage();
                     },
-                    color: Colors.yellowAccent,
+                  backgroundColor: Colors.orangeAccent,
+//                    color: Colors.yellowAccent,
                 ),
               ),
               new Container(
 //                width: 150,
                 padding: EdgeInsets.fromLTRB(50, 0, 0, 25),
-                child: RaisedButton(
+                child: FloatingActionButton(
                   onPressed: (){
                     _pubMsg = 'D';
                     _pubMessage();
                   },
-                  child: Text('→'),
-                  color: Colors.yellowAccent,
+                  child: new Icon(Icons.arrow_right),
+                  backgroundColor: Colors.orangeAccent,
                 ),
               ),
             ],
@@ -191,14 +250,14 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
-                padding: EdgeInsets.fromLTRB(150, 0, 0, 0),
-                child: RaisedButton(
+                padding: EdgeInsets.fromLTRB(175, 0, 0, 0),
+                child: FloatingActionButton(
                     onPressed:(){
                       _pubMsg = 'S';
                       _pubMessage();
                     },
-                    child: Text('↓'),
-                    color: Colors.yellowAccent,
+                    child: new Icon(Icons.arrow_drop_down),
+                    backgroundColor: Colors.orangeAccent,
                 ),
               )
             ],
