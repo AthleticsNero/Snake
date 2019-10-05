@@ -45,6 +45,144 @@ class _MyHomePageState extends State<MyHomePage>{
     _connect();
     _subMessage();
   }
+  _FreeModeOption(){
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return new SimpleDialog(
+                title: new Text('自由模式'),
+                children: <Widget>[
+//                  new SimpleDialogOption(
+//                    child: Text('模式一'),
+                new Row(
+                  children: <Widget>[
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '1';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式一'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10,0,0,0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '2';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式二'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '3';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式三'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                  ],
+                ),
+                new Row(
+                  children: <Widget>[
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '4';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式四'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10,0,0,0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '5';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式五'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '6';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式六'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                  ],
+                ),
+                new Row(
+                  children: <Widget>[
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '7';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式七'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10,0,0,0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '8';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式八'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                    new Container(
+                      child: new OutlineButton(
+                        onPressed: (){
+                          _pubMsg = '9';
+                          _pubMode();
+                          score = 0;
+                          _subMessage();
+                        },
+                        child: Text('模式九'),
+                      ),
+                      margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                    ),
+                  ],
+                )
+//                  ),
+//                  new SimpleDialogOption(
+//                    child: Text('模式二'),
+//                  )
+                ],
+              );
+        }
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,75 +192,14 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
-                padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式1'),
-                  onPressed: (){
-                    _pubMsg = '1';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.blueAccent,
+                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                child:Text(
+                    "蛇长："+
+                        snake_len.toString()
                 ),
               ),
               new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式2'),
-                  onPressed: (){
-                    _pubMsg = '2';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                ),
-              ),
-              new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式3'),
-                  onPressed: (){
-                    _pubMsg = '3';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.greenAccent
-                ),
-              ),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              new Container(
-                padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式4'),
-                  onPressed: (){
-                    _pubMsg = '4';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.blueAccent,
-                ),
-              ),
-              new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式5'),
-                  onPressed: (){
-                    _pubMsg = '5';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.greenAccent,
-                ),
-              ),
-              new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(230, 0, 0, 0),
                 child: RaisedButton(
                   child: Text('冒险模式'),
                   onPressed: (){
@@ -131,51 +208,8 @@ class _MyHomePageState extends State<MyHomePage>{
                     score = 0;
                     _subMessage();
                   },
-                ),
-              ),
-
-            ],
-
-          ),
-
-          new Row(
-            children: <Widget>[
-              new Container(
-                padding: EdgeInsets.fromLTRB(45, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式6'),
-                  onPressed: (){
-                    _pubMsg = '6';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.blueAccent,
-                ),
-              ),
-              new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式7'),
-                  onPressed: (){
-                    _pubMsg = '7';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
-                  color: Colors.greenAccent,
-                ),
-              ),
-              new Container(
-                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                child: RaisedButton(
-                  child: Text('开始模式8'),
-                  onPressed: (){
-                    _pubMsg = '8';
-                    _pubMode();
-                    score = 0;
-                    _subMessage();
-                  },
+                  textColor: Colors.white,
+                  color: Colors.deepOrangeAccent,
                 ),
               ),
             ],
@@ -183,21 +217,19 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
-                padding: EdgeInsets.fromLTRB(150, 20, 0, 0),
-                child:Text(
-                  "蛇长："+
-                  snake_len.toString()
-                ),
-              )
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              new Container(
-                padding: EdgeInsets.fromLTRB(150, 20, 0, 0),
+                padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                 child: Text(
-                  "得分："+
-                    score.toString()
+                    "得分："+
+                        score.toString()
+                ),
+              ),
+              new Container(
+                padding: EdgeInsets.fromLTRB(230, 0, 0, 0),
+                child: RaisedButton(
+                  child: new Text('自由模式'),
+                  onPressed: _FreeModeOption,
+                  textColor: Colors.white,
+                  color: Colors.deepOrangeAccent,
                 ),
               )
             ],
@@ -206,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 250,
-                padding: EdgeInsets.fromLTRB(175, 100, 0, 25),
+                padding: EdgeInsets.fromLTRB(175, 200, 0, 20),
                 child: FloatingActionButton(
                   child: new Icon(Icons.arrow_drop_up),
                   onPressed: (){
@@ -222,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 150,
-                padding: EdgeInsets.fromLTRB(100, 0, 50, 25),
+                padding: EdgeInsets.fromLTRB(100, 0, 50, 20),
                 child: FloatingActionButton(
                     child:  new Icon(Icons.arrow_left),
                     onPressed:(){
@@ -235,7 +267,7 @@ class _MyHomePageState extends State<MyHomePage>{
               ),
               new Container(
 //                width: 150,
-                padding: EdgeInsets.fromLTRB(50, 0, 0, 25),
+                padding: EdgeInsets.fromLTRB(45, 0, 0, 20),
                 child: FloatingActionButton(
                   onPressed: (){
                     _pubMsg = 'D';

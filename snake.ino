@@ -13,7 +13,7 @@ PubSubClient client(espClient);
 int wall3[44] = {51,80,95,124,139,168,169,170,171,172,173,58,73,102,117,146,161,160,159,158,157,156,310,311,312,313,314,315,344,359,388,403,432,327,326,325,324,323,322,337,366,381,410,425};
 char towards = 'D';
 char opt = '0';
-int no = 1;
+int no = 2;
 int single_score = 100;//分数的计数单位
 int now_score = 100;//当前关卡的分数单位
 char length_msg[3];
@@ -128,6 +128,9 @@ void clear_all(){
     }
   }
   snake_len = 3;
+  score = 0;
+  itoa(score,score_msg,10);
+  client.publish("score",score_msg);
 }
 void create_wall2(){
   int i; 
@@ -272,6 +275,26 @@ void create_wall8(){
     maps[12][i] = 1;
     maps[i][9] = 1;
     maps[i][12] = 1;
+  }
+  for(i=0;i<MAXLED;i++){
+    if((i/22)%2==0){
+       if(maps[i/22][i%22] == 1){
+          leds[i] = CRGB(0,0,255);
+       }
+    }else{
+      if(maps[i/22][21-i%22] == 1){
+        leds[i] = CRGB(0,0,255);
+      }
+    }
+  }
+}
+void create_wall9(){
+  int i;
+  for(i=4;i<=11;i++){
+    maps[11-i][i] = 1;
+    maps[i][i+10] = 1;
+    maps[i+7][i-4] = 1;
+    maps[i+10][22-i] = 1;
   }
   for(i=0;i<MAXLED;i++){
     if((i/22)%2==0){
@@ -661,6 +684,28 @@ void mode8(){
     }
   }
 }
+void mode9(){
+  clear_all();
+  create_wall9();
+  create_food();
+  create_snake();
+  towards = 'D';
+  FastLED.show();
+  delay(1000);
+  client.publish("snake_len","3");
+  while(opt == '9'){
+    client.loop();
+    check_mode('9');
+    snake_moving();
+    if(snake_len<=10){
+      delay(600);
+    }else if(snake_len<=20){
+      delay(475);
+    }else{
+      delay(350);
+    }
+  }
+}
 //用于检查当前是不是切换了mode
 void check_mode(char now_mode){
   if(opt!=now_mode){
@@ -685,6 +730,8 @@ void check_mode(char now_mode){
       mode7();
     }else if(opt == '8'){
       mode8();
+    }else if(opt == '9'){
+      mode9();
     }else if(opt == 'B'){
       battle_mode();
       //闯关模式，吃十五个食物进入下一关
@@ -695,29 +742,45 @@ void battle_mode(){
   while(opt=='B'){
     clear_all();
     switch(no){
-      case 1:
+      case 2:
         create_wall2();
         now_score = single_score;
         break;
-      case 2:
+      case 3:
         create_wall3();
         now_score = single_score*1.5;
         break;
-      case 3:
+      case 4:
         create_wall4();
         now_score = single_score*2;
         break;
-      case 4:
+      case 5:
         create_wall5();
         now_score = single_score*2.5;
         break;
-      case 5:
-        create_wall5();
+      case 6:
+        create_wall6();
         now_score = single_score*3;
+        break;
+      case 7:
+        create_wall7();
+        now_score = single_score*3.5;
+        break;
+      case 8:
+        create_wall8();
+        now_score = single_score*4.0;
+        break;
+      case 9:
+        create_wall9();
+        now_score = single_score*4.5;
         break;
      }
      create_food();
-     create_snake();
+     if(no==7){
+      create_snake2();
+     }else{
+      create_snake();
+     }
      FastLED.show();
      delay(1000);
      client.publish("snake_len","3");
@@ -732,8 +795,12 @@ void battle_mode(){
         delay(350);
       }
       if(snake_len==6){
-        towards='D';
         no++;
+        if(no==6){
+          towards='S';
+        }else{
+          towards='D';
+        }
         break;
       }
     }
@@ -767,6 +834,8 @@ void loop() {
     mode7();
   }else if(opt == '8'){
     mode8();
+  }else if(opt == '9'){
+    mode9();
   }else if(opt == 'B'){
     battle_mode();
     //闯关模式，吃十五个食物进入下一关
