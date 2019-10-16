@@ -192,6 +192,7 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
+                width:107,
                 padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                 child:Text(
                     "蛇长："+
@@ -199,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage>{
                 ),
               ),
               new Container(
-                padding: EdgeInsets.fromLTRB(230, 0, 0, 0),
+                padding: EdgeInsets.fromLTRB(180, 0, 0, 0),
                 child: RaisedButton(
                   child: Text('冒险模式'),
                   onPressed: (){
@@ -217,6 +218,7 @@ class _MyHomePageState extends State<MyHomePage>{
           new Row(
             children: <Widget>[
               new Container(
+                width: 107,
                 padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
                 child: Text(
                     "得分："+
@@ -224,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage>{
                 ),
               ),
               new Container(
-                padding: EdgeInsets.fromLTRB(230, 0, 0, 0),
+                margin: EdgeInsets.fromLTRB(180, 0, 0, 0),
                 child: RaisedButton(
                   child: new Text('自由模式'),
                   onPressed: _FreeModeOption,
@@ -238,7 +240,7 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 250,
-                padding: EdgeInsets.fromLTRB(175, 200, 0, 20),
+                padding: EdgeInsets.fromLTRB(175, 200, 0, 10),
                 child: FloatingActionButton(
                   child: new Icon(Icons.arrow_drop_up),
                   onPressed: (){
@@ -254,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage>{
             children: <Widget>[
               new Container(
 //                width: 150,
-                padding: EdgeInsets.fromLTRB(100, 0, 50, 20),
+                padding: EdgeInsets.fromLTRB(110, 0, 30, 10),
                 child: FloatingActionButton(
                     child:  new Icon(Icons.arrow_left),
                     onPressed:(){
@@ -267,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage>{
               ),
               new Container(
 //                width: 150,
-                padding: EdgeInsets.fromLTRB(45, 0, 0, 20),
+                padding: EdgeInsets.fromLTRB(45, 0, 0, 10),
                 child: FloatingActionButton(
                   onPressed: (){
                     _pubMsg = 'D';
@@ -284,6 +286,7 @@ class _MyHomePageState extends State<MyHomePage>{
               new Container(
                 padding: EdgeInsets.fromLTRB(175, 0, 0, 0),
                 child: FloatingActionButton(
+
                     onPressed:(){
                       _pubMsg = 'S';
                       _pubMessage();

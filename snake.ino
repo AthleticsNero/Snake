@@ -105,11 +105,6 @@ void setup_wifi(){
   Serial.println(WiFi.localIP());
 }
 void callback(char* topic,byte* payload,unsigned int length){   
-//  opt = (char)payload[0];
-//  Serial.println(opt);
-//  Serial.println((char)payload[0]);
-//  Serial.print("传入数据:");
-//  Serial.println((char)payload[0]);
   if(strcmp(topic,"mode")==0){
     opt = (char)payload[0];   
     Serial.println(opt);        
@@ -525,13 +520,7 @@ void mode3(){
     client.loop();
     check_mode('3');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void infinity_mode(){
@@ -545,13 +534,7 @@ void infinity_mode(){
     client.loop();
     check_mode('1');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode2(){
@@ -566,13 +549,7 @@ void mode2(){
     client.loop();
     check_mode('2');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode4(){
@@ -588,13 +565,7 @@ void mode4(){
     client.loop();
     check_mode('4');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode5(){
@@ -609,13 +580,7 @@ void mode5(){
     client.loop();
     check_mode('5');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode6(){
@@ -631,13 +596,7 @@ void mode6(){
     client.loop();
     check_mode('6');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode7(){
@@ -653,13 +612,7 @@ void mode7(){
     client.loop();
     check_mode('7');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode8(){
@@ -675,13 +628,7 @@ void mode8(){
     client.loop();
     check_mode('8');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 void mode9(){
@@ -697,13 +644,7 @@ void mode9(){
     client.loop();
     check_mode('9');
     snake_moving();
-    if(snake_len<=10){
-      delay(600);
-    }else if(snake_len<=20){
-      delay(475);
-    }else{
-      delay(350);
-    }
+    delay_time();
   }
 }
 //用于检查当前是不是切换了mode
@@ -737,6 +678,15 @@ void check_mode(char now_mode){
       //闯关模式，吃十五个食物进入下一关
     }
   }
+}
+void delay_time(){
+  if(snake_len<=10){
+      delay(475);
+    }else if(snake_len<=15){
+      delay(375);
+    }else{
+      delay(275);
+   }
 }
 void battle_mode(){
   while(opt=='B'){
@@ -787,14 +737,8 @@ void battle_mode(){
      while(opt == 'B'){
       client.loop();
       snake_moving();
-      if(snake_len<=10){
-        delay(600);
-      }else if(snake_len<=15){
-        delay(475);
-      }else{
-        delay(350);
-      }
-      if(snake_len==6){
+      delay_time();
+      if(snake_len==15){
         no++;
         if(no==6){
           towards='S';
@@ -805,7 +749,6 @@ void battle_mode(){
       }
     }
   }
-  
 }
 void loop() {
   if(!client.connected()){
